@@ -473,7 +473,8 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    const link = window.location.origin + '/investor.html?id=' + result.investorId;
+                    // Use the full GitHub Pages URL with correct capitalization
+                    const link = 'https://preetipatidarr.github.io/Investor_Dealroom/investor.html?id=' + result.investorId;
                     document.getElementById('linkResult').innerHTML = `
                         <strong style="color: #52c41a;">✅ Deal Room Created!</strong><br>
                         <a href="${link}" target="_blank">${link}</a><br>
