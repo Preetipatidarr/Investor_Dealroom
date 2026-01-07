@@ -136,14 +136,19 @@
             color: #2c3e50;
         }
         
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
         table {
             width: 100%;
+            min-width: 600px;
             border-collapse: collapse;
-            margin: 20px 0;
             background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
         
         th, td {
@@ -305,6 +310,10 @@
             .header h1 { font-size: 1.8em; }
             .content { padding: 20px; }
             .buttons { grid-template-columns: 1fr; }
+            .header-info { grid-template-columns: 1fr; }
+            .image-grid { grid-template-columns: 1fr; }
+            .unit-details { grid-template-columns: 1fr; }
+            th, td { padding: 12px 8px; font-size: 0.9em; }
         }
     </style>
 </head>
@@ -342,32 +351,34 @@
 
             <div class="section">
                 <h2 class="section-title">👤 Your Investment Profile</h2>
-                <table>
-                    <tr>
-                        <th>Criteria</th>
-                        <th>Details</th>
-                    </tr>
-                    <tr>
-                        <td><strong>Budget</strong></td>
-                        <td id="profile-budget">-</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Investment Objective</strong></td>
-                        <td id="profile-objective">-</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Holding Period</strong></td>
-                        <td id="profile-holding">-</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Property Type Preference</strong></td>
-                        <td id="profile-type">-</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Risk Profile</strong></td>
-                        <td id="profile-risk">-</td>
-                    </tr>
-                </table>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Criteria</th>
+                            <th>Details</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Budget</strong></td>
+                            <td id="profile-budget">-</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Investment Objective</strong></td>
+                            <td id="profile-objective">-</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Holding Period</strong></td>
+                            <td id="profile-holding">-</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Property Type Preference</strong></td>
+                            <td id="profile-type">-</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Risk Profile</strong></td>
+                            <td id="profile-risk">-</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
 
             <div class="section">
@@ -497,7 +508,7 @@
 
             // Projects comparison
             if (data.projects && data.projects.length > 0) {
-                let projectTable = '<table><tr><th>Project</th><th>Location</th><th>Developer</th><th>Price</th><th>Payment Plan</th><th>Yield</th></tr>';
+                let projectTable = '<div class="table-container"><table><tr><th>Project</th><th>Location</th><th>Developer</th><th>Price</th><th>Payment Plan</th><th>Yield</th></tr>';
                 data.projects.forEach(project => {
                     if (project.name) {
                         projectTable += `<tr>
@@ -510,7 +521,7 @@
                         </tr>`;
                     }
                 });
-                projectTable += '</table>';
+                projectTable += '</table></div>';
                 document.getElementById('projectComparison').innerHTML = projectTable;
             }
 
@@ -518,18 +529,21 @@
             if (data.imageLinks) {
                 let imagesHTML = '';
                 ['projectA', 'projectB', 'projectC'].forEach((proj, idx) => {
-                    if (data.imageLinks[proj] && data.projects[idx]?.name) {
-                        imagesHTML += `<h3 style="margin: 30px 0 15px 0; color: #2c3e50;">Project ${String.fromCharCode(65 + idx)} – ${data.projects[idx].name}</h3>`;
+                    const projectImages = data.imageLinks[proj];
+                    const projectName = data.projects[idx]?.name;
+                    
+                    if (projectImages && projectName) {
+                        imagesHTML += `<h3 style="margin: 30px 0 15px 0; color: #2c3e50;">Project ${String.fromCharCode(65 + idx)} – ${projectName}</h3>`;
                         imagesHTML += '<div class="image-grid">';
                         
-                        if (data.imageLinks[proj].render) {
-                            imagesHTML += `<div class="image-box"><img src="${data.imageLinks[proj].render}" alt="Render"></div>`;
+                        if (projectImages.render) {
+                            imagesHTML += `<div class="image-box"><img src="${projectImages.render}" alt="Render" onerror="this.parentElement.innerHTML='<div style=padding:20px;text-align:center;color:#999>Image not available</div>'"></div>`;
                         }
-                        if (data.imageLinks[proj].location) {
-                            imagesHTML += `<div class="image-box"><img src="${data.imageLinks[proj].location}" alt="Location"></div>`;
+                        if (projectImages.location) {
+                            imagesHTML += `<div class="image-box"><img src="${projectImages.location}" alt="Location" onerror="this.parentElement.innerHTML='<div style=padding:20px;text-align:center;color:#999>Image not available</div>'"></div>`;
                         }
-                        if (data.imageLinks[proj].master) {
-                            imagesHTML += `<div class="image-box"><img src="${data.imageLinks[proj].master}" alt="Master Plan"></div>`;
+                        if (projectImages.master) {
+                            imagesHTML += `<div class="image-box"><img src="${projectImages.master}" alt="Master Plan" onerror="this.parentElement.innerHTML='<div style=padding:20px;text-align:center;color:#999>Image not available</div>'"></div>`;
                         }
                         
                         imagesHTML += '</div>';
@@ -542,6 +556,8 @@
             if (data.units && data.units.length > 0) {
                 let unitsHTML = '';
                 data.units.forEach((unit, idx) => {
+                    const unitImage = data.imageLinks ? data.imageLinks['unit' + (idx + 1)] : null;
+                    
                     unitsHTML += `
                         <div class="toggle">
                             <div class="toggle-header" onclick="this.parentElement.classList.toggle('active')">
@@ -557,10 +573,10 @@
                                     <div class="unit-detail-item"><strong>Floor</strong><span>${unit.floor}</span></div>
                                     <div class="unit-detail-item"><strong>Handover</strong><span>${unit.handover}</span></div>
                                 </div>
-                                ${data.imageLinks && data.imageLinks['unit' + (idx + 1)] ? 
-                                    `<div class="image-box" style="margin: 20px 0;"><img src="${data.imageLinks['unit' + (idx + 1)]}" alt="Floor Plan"></div>` : 
+                                ${unitImage ? 
+                                    `<div class="image-box" style="margin: 20px 0;"><img src="${unitImage}" alt="Floor Plan" onerror="this.parentElement.innerHTML='<div style=padding:20px;text-align:center;color:#999>Floor plan image not available</div>'"></div>` : 
                                     ''}
-                                ${unit.why ? `<div style="margin-top: 20px; line-height: 1.8;">${unit.why.split('\n').map(line => `<p>• ${line}</p>`).join('')}</div>` : ''}
+                                ${unit.why ? `<h4 style="margin-top: 20px;">Why This Unit is Attractive:</h4><div style="margin-top: 15px; line-height: 1.8;">${unit.why.split('\n').filter(line => line.trim()).map(line => `<p style="margin: 8px 0;">• ${line}</p>`).join('')}</div>` : ''}
                             </div>
                         </div>
                     `;
