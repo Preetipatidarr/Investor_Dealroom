@@ -455,9 +455,35 @@
                     payment: document.getElementById(`project${letter}_payment`).value,
                     yield: document.getElementById(`project${letter}_yield`).value
                 })),
-                units: [1, 2, 3].map(num => ({
-                    why: document.getElementById(`unit${num}_why`).value
-                })),
+                units: [
+                    {
+                        name: '1BR Marina View',
+                        size: '750 sq ft',
+                        view: 'Full Dubai Marina',
+                        price: 'AED 1,200,000',
+                        floor: '12-18',
+                        handover: 'Q4 2026',
+                        why: document.getElementById('unit1_why').value || ''
+                    },
+                    {
+                        name: 'Studio City View',
+                        size: '450 sq ft',
+                        view: 'City skyline',
+                        price: 'AED 650,000',
+                        floor: '6-10',
+                        handover: 'Q2 2027',
+                        why: document.getElementById('unit2_why').value || ''
+                    },
+                    {
+                        name: '2BR Golf View',
+                        size: '1,350 sq ft',
+                        view: 'Golf course',
+                        price: 'AED 2,100,000',
+                        floor: '20-25',
+                        handover: 'Q1 2027',
+                        why: document.getElementById('unit3_why').value || ''
+                    }
+                ],
                 recommendation: document.getElementById('recommendation').value,
                 images: images,
                 createdAt: new Date().toISOString()
